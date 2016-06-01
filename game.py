@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import random
 
 class Pong(object):
     def __init__(self, screensize):
@@ -16,8 +17,10 @@ class Pong(object):
                                 self.radius*2, self.radius*2)
 
         self.color = (100,100,255)
+        
 
-        self.direction = [1,1]
+        vector = [ 1,-1]
+        self.direction = [vector[random.randint(0,1)],vector[random.randint(0,1)]]
 
         self.speedx = 2
         self.speedy = 5
@@ -27,17 +30,17 @@ class Pong(object):
         self.hit_edge_left = False
         self.hit_edge_right = False
 
-    def update(self, player_paddle, ai_paddle):
+    def update(self, player_paddle, ai_paddle_0,ai_paddle_1,ai_paddle_2):
 
         self.centerx += self.direction[0]*self.speedx
         self.centery += self.direction[1]*self.speedy
 
         self.rect.center = (self.centerx, self.centery)
 
-        if self.rect.top <= 0:
+        '''if self.rect.top <= 0:
             self.direction[1] = 1
         elif self.rect.bottom >= self.screensize[1]-1:
-            self.direction[1] = -1
+            self.direction[1] = -1'''
 
         if self.rect.right >= self.screensize[0]-1:
             self.hit_edge_right = True
@@ -47,9 +50,13 @@ class Pong(object):
         #CODE TASK: Change the direction of the pong, based on where it hits the paddles (HINT: check the center points of each)
 
         if self.rect.colliderect(player_paddle.rect):
-            self.direction[0] = -1
-        if self.rect.colliderect(ai_paddle.rect):
-            self.direction[0] = 1
+            self.direction[0] *= -1            
+        if self.rect.colliderect(ai_paddle_0.rect):
+            self.direction[0] *= -1
+        if self.rect.colliderect(ai_paddle_1.rect):
+            self.direction[1] *= -1
+        if self.rect.colliderect(ai_paddle_2.rect):
+            self.direction[1] *= -1        
 
     def render(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius, 0)
@@ -195,7 +202,8 @@ def main():
         ai_paddle_1.update(pong)
         ai_paddle_2.update(pong)
         player_paddle.update()
-        pong.update(player_paddle, ai_paddle_0)
+        pong.update(player_paddle, ai_paddle_0,ai_paddle_1,ai_paddle_2)
+       
 
         #CODE TASK: make some text on the screen over everything else saying you lost/won, and then exit on keypress
         #CODE BONUS: allow restarting of the game (hint: you can recreate the Pong/Paddle objects the same way we made them initially)
