@@ -29,7 +29,8 @@ class Pong(object):
 
         self.hit_edge_left = False
         self.hit_edge_right = False
-
+        self.hit_edge_top = False
+        self.hit_edge_bot = False
     def update(self, player_paddle, ai_paddle_0,ai_paddle_1,ai_paddle_2):
 
         self.centerx += self.direction[0]*self.speedx
@@ -37,15 +38,16 @@ class Pong(object):
 
         self.rect.center = (self.centerx, self.centery)
 
-        '''if self.rect.top <= 0:
-            self.direction[1] = 1
-        elif self.rect.bottom >= self.screensize[1]-1:
-            self.direction[1] = -1'''
+        
 
         if self.rect.right >= self.screensize[0]-1:
             self.hit_edge_right = True
         elif self.rect.left <= 0:
             self.hit_edge_left = True
+        elif self.rect.top <= 0:
+            self.hit_edge_top = True
+        elif self.rect.bottom <= 0:
+            self.rect.bot = True
 
         #CODE TASK: Change the direction of the pong, based on where it hits the paddles (HINT: check the center points of each)
 
@@ -174,7 +176,15 @@ def main():
     ai_paddle_1 = AIPaddle_hor(screensize,1)
     ai_paddle_2 = AIPaddle_hor(screensize,0)
     player_paddle = PlayerPaddle(screensize)
-
+    myfont = pygame.font.SysFont("comicsansms",50)
+    score_ai_0  =  10
+    score_player = 10
+    score_ai_1  =  10
+    score_ai_2  =  10
+    label_0 = myfont.render(str(score_ai_0),1,(255,255,255)) 
+    label_1 = myfont.render(str(score_ai_1),1,(255,255,255))
+    label_2 = myfont.render(str(score_ai_2),1,(255,255,255))
+    label_player = myfont.render(str(score_player),1,(255,255,255))
     running = True
 
     while running:
@@ -209,10 +219,24 @@ def main():
         #CODE BONUS: allow restarting of the game (hint: you can recreate the Pong/Paddle objects the same way we made them initially)
         if pong.hit_edge_left:
             print 'You Won'
-            #running = False
+            score_ai_0 -= 1
+            running = False
+            label_0 = myfont.render(str(score_ai_0),1,(255,255,255))
+        elif pong.hit_edge_top :
+            print 'You Won'
+            score_ai_1 -= 1
+            running = False
+            label_1 = myfont.render(str(score_ai_0),1,(255,255,255))
+        elif  pong.hit_edge_bot :
+            print 'You Won'
+            score_ai_2 -= 1
+            running = False  
+            label_2 = myfont.render(str(score_ai_0),1,(255,255,255))
         elif pong.hit_edge_right:
             print 'You Lose'
-            #running = False
+            score_player -= 1
+            running = False
+            label_player = myfont.render(str(score_player),1,(255,255,255))
 
         #rendering phase
         screen.fill((100,200,100))
@@ -222,7 +246,10 @@ def main():
         ai_paddle_2.render(screen)
         player_paddle.render(screen)
         pong.render(screen)
-
+        screen.blit(label_player, (585, 415))
+        screen.blit(label_0, (0,415))
+        screen.blit(label_1, (0,-10))
+        screen.blit(label_2, (585,-10))
         pygame.display.flip()
 
     pygame.quit()
