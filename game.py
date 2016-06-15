@@ -45,8 +45,8 @@ class Pong(object):
             self.hit_edge_left = True
         elif self.rect.top <= 0:
             self.hit_edge_top = True
-        elif self.rect.bottom <= 0:
-            self.rect.bot = True
+        elif self.rect.bottom >= self.screensize[1]-1:
+            self.hit_edge_bot = True
 
         #CODE TASK: Change the direction of the pong, based on where it hits the paddles (HINT: check the center points of each)
 
@@ -179,7 +179,7 @@ class AIPaddle_hor(object):
 
         self.speed = 3
 
-    def update(self, pong, corner_UL, corner_BL):
+    def update(self, pong, corner_R, corner_L):
         if pong.rect.left < self.rect.left:
             self.centerx -= self.speed
         elif pong.rect.right > self.rect.right:
@@ -187,12 +187,12 @@ class AIPaddle_hor(object):
 
         self.rect.center = (self.centerx, self.centery)
         #Checar colisão com os cantos
-        if self.rect.colliderect(corner_UL):
-            self.rect.top = corner_UL.radius 
-            self.centery += self.speed
-        elif self.rect.colliderect(corner_BL):
-            self.rect.bottom = self.screensize[1] - corner_BL.radius    
-            self.centery -= self.speed
+        if self.rect.colliderect(corner_R):
+            self.rect.right = corner_R.radius 
+            self.centerx += self.speed
+        elif self.rect.colliderect(corner_L):
+            self.rect.left = self.screensize[0] - corner_L.radius    
+            self.centerx -= self.speed
         
         #ajustar a posição
         self.rect.center = (self.centerx, self.centery)              
@@ -292,8 +292,8 @@ def main():
 
         #object updating phase
         ai_paddle_0.update(pong,cornerUL, cornerBL)
-        ai_paddle_1.update(pong,cornerUL, cornerBL)
-        ai_paddle_2.update(pong,cornerUL, cornerBL)
+        ai_paddle_1.update(pong,cornerUL, cornerUR)
+        ai_paddle_2.update(pong,cornerBL, cornerBR)
         player_paddle.update(cornerUR, cornerBR)
         pong.update(player_paddle, ai_paddle_0,ai_paddle_1,ai_paddle_2,cornerBL, cornerBR, cornerUL, cornerUR)
        
@@ -309,12 +309,12 @@ def main():
             print 'You Won'
             score_ai_1 -= 1
             pong = Pong(screensize)
-            label_1 = myfont.render(str(score_ai_0),1,(255,255,255))
+            label_1 = myfont.render(str(score_ai_1),1,(255,255,255))
         elif  pong.hit_edge_bot :
             print 'You Won'
             score_ai_2 -= 1
             pong = Pong(screensize)  
-            label_2 = myfont.render(str(score_ai_0),1,(255,255,255))
+            label_2 = myfont.render(str(score_ai_2),1,(255,255,255))
         elif pong.hit_edge_right:
             print 'You Lose'
             score_player -= 1
