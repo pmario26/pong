@@ -8,7 +8,10 @@ def main():
 	clock = pygame.time.Clock()
 
 	screensize = (480, 480)
-
+	
+	pygame.mixer.music.load('opening.wav')
+	 
+	
 	screen = pygame.display.set_mode(screensize)
 
 	myfont = pygame.font.SysFont("comicsansms",50) 
@@ -18,7 +21,9 @@ def main():
 	quit = myfont.render("Exit", 1, (255,0,0))
 
 	menu = True
+	pygame.mixer.music.play(-1)
 	while menu == True:
+		
 		clock.tick(60)
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -32,6 +37,7 @@ def main():
 		if 75+180 > mouse[0] > 75 and 165+50 > mouse[1] > 165:
 			pygame.draw.rect(screen, (0,200, 0), (75, 165, 180, 50), 10)
 			if click[0] == 1:
+				
 				game.main()			
 		else:
 			pygame.draw.rect(screen, (0,200, 0), (75, 165, 180, 50), 1)
@@ -49,7 +55,7 @@ def main():
 		screen.blit(quit, (100, 300))
 		
 		pygame.display.update()
-
+		
 	pygame.quit()
 
 main()

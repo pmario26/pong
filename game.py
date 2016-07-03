@@ -327,13 +327,14 @@ def main():
     screensize = (480,480)
     
     screen = pygame.display.set_mode(screensize)
+    pygame.mixer.music.stop()
     
     clock = pygame.time.Clock()
 
     
     #pong = Pong(screensize)
     Balls.append(Pong(screensize))
-                 
+    pygame.mixer.music.load('gaming.mp3')            
     ai_paddle_0 = AIPaddle_vert(screensize)
     ai_paddle_1 = AIPaddle_hor(screensize,1)
     ai_paddle_2 = AIPaddle_hor(screensize,0)
@@ -351,8 +352,9 @@ def main():
     cornerBL = Corner(screensize, 0, 480)
     cornerBR = Corner(screensize, 480, 480)
     cornerUL = Corner(screensize, 0, 0)
-    cornerUR = Corner(screensize, 480, 0)    
-
+    cornerUR = Corner(screensize, 480, 0) 
+    scored = pygame.mixer.Sound('scored.wav')
+    pygame.mixer.music.play(-1)
     SP = 0
     SA0 = 0
     SA1 = 0
@@ -424,6 +426,7 @@ def main():
                     Balls.remove(Ball)
                     #Balls.append(Pong(screensize))
                     label_0 = myfont.render(str(score_ai_0),1,(255,255,255))
+                    scored.play()
             elif Ball.hit_edge_top :
                 #print 'You Won'
                 if score_ai_1 <= 0:
@@ -438,6 +441,7 @@ def main():
                     Balls.remove(Ball)
                     #Balls.append(Pong(screensize))
                     label_1 = myfont.render(str(score_ai_1),1,(255,255,255))
+                    scored.play()
             elif  Ball.hit_edge_bot :
                # print 'You Won'
                 if score_ai_2 <= 0:
@@ -452,6 +456,7 @@ def main():
                     Balls.remove(Ball)
                     #Balls.append(Pong(screensize))
                     label_2 = myfont.render(str(score_ai_2),1,(255,255,255))
+                    scored.play()
             elif Ball.hit_edge_right:
                 #print 'You Lose'
                 if score_player <= 0:
@@ -466,6 +471,7 @@ def main():
                     Balls.remove(Ball)
                     #Balls.append(Pong(screensize))
                     label_player = myfont.render(str(score_player),1,(255,255,255))
+                    scored.play()
 
         #Colisao entre os pongs
         ColisionDetect()
