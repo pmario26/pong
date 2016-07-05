@@ -5,7 +5,7 @@ import time
 #import menu
 
 Balls = [] # Lista de Bolas no jogo
-class Pong(object):
+class NormalBall(object):
     def __init__(self, screensize):
 
         self.screensize = screensize
@@ -22,7 +22,7 @@ class Pong(object):
                                 self.radius*2, self.radius*2)
 
         #self.color = (100,100,255)
-        self.color = (random.randrange(0,255,5),random.randrange(0,255,5),random.randrange(0,255,5))
+        self.color = (255,255,255)
 
         #Define Randomicamente qual direcao a bola vai sair
         self.direction = [random.randrange(-1,2,2), random.randrange(-1,2,2)]
@@ -55,7 +55,6 @@ class Pong(object):
         elif self.rect.bottom >= self.screensize[1]-1:
             self.hit_edge_bot = True
 
-        #CODE TASK: Change the direction of the pong, based on where it hits the paddles (HINT: check the center points of each)
         #Colisao da bola com os paddles
         if self.rect.colliderect(player_paddle.rect):
             self.direction[0] = -1            
@@ -111,6 +110,227 @@ class Pong(object):
     def render(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius, 0)
         pygame.draw.circle(screen, (0,0,0), self.rect.center, self.radius, 1)
+        
+class IceBall(object):
+    def __init__(self, screensize):
+
+        self.screensize = screensize
+
+        self.centerx = int(screensize[0]*0.5)
+        self.centery = int(screensize[1]*0.5)
+
+        self.radius = 8
+
+        self.colidiu = False
+
+        self.rect = pygame.Rect(self.centerx-self.radius,
+                                self.centery-self.radius,
+                                self.radius*2, self.radius*2)
+
+        #self.color = (100,100,255)
+        self.color = (100,200,240)
+
+        #Define Randomicamente qual direcao a bola vai sair
+        self.direction = [random.randrange(-1,2,2), random.randrange(-1,2,2)]
+        self.speedx = 1.5 
+        self.speedy = 1.5
+        #CODE TASK: change speed/radius as game progresses to make it harder
+        #CODE BONUS: adjust ratio of x and y speeds to make it harder as game progresses
+
+        self.hit_edge_left = False
+        self.hit_edge_right = False
+        self.hit_edge_top = False
+        self.hit_edge_bot = False
+        
+        
+    def update(self, player_paddle, ai_paddle_0,ai_paddle_1,ai_paddle_2, corner_BL, corner_BR, corner_UL, corner_UR ):
+
+        self.centerx += self.direction[0]*self.speedx
+        self.centery += self.direction[1]*self.speedy
+
+        self.rect.center = (self.centerx, self.centery)
+
+        
+        #Checar se colidiu com a parede
+        if self.rect.right >= self.screensize[0]-1:
+            self.hit_edge_right = True
+        elif self.rect.left <= 0:
+            self.hit_edge_left = True
+        elif self.rect.top <= 0:
+            self.hit_edge_top = True
+        elif self.rect.bottom >= self.screensize[1]-1:
+            self.hit_edge_bot = True
+
+        #Colisao da bola com os paddles
+        if self.rect.colliderect(player_paddle.rect):
+            self.direction[0] = -1            
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            player_paddle.speed -= 1
+        if self.rect.colliderect(ai_paddle_0.rect):
+            self.direction[0] = 1
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            ai_paddle_0.speed -= 1
+        if self.rect.colliderect(ai_paddle_1.rect):
+            self.direction[1] = 1
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            ai_paddle_1.speed -= 1
+        if self.rect.colliderect(ai_paddle_2.rect):
+            self.direction[1] = -1
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            ai_paddle_2.speed -= 1
+            
+        #Colisao da bola com os cantos      
+        if pygame.sprite.collide_circle(self, corner_BL):
+            if self.direction[0] > 0:
+                self.direction[0] *= 1.2
+                self.direction[1] *= 1
+            else:
+                self.direction[0] *= -1.25
+                self.direction[1] *= -1               
+        
+        if pygame.sprite.collide_circle(self, corner_BR):
+            if self.direction[0] < 0:
+                self.direction[0] *= 1.25
+                self.direction[1] *= 1.25
+            else:
+                self.direction[0] *= -1.25
+                self.direction[1] *= -1
+    
+        if pygame.sprite.collide_circle(self, corner_UL):
+            if self.direction[0] > 0:
+                self.direction[0] *= 1.25
+                self.direction[1] *= 1
+            else:
+                self.direction[0] *= -1.2
+                self.direction[1] *= -1
+                    
+        if pygame.sprite.collide_circle(self, corner_UR):
+            if self.direction[0] < 0:
+                self.direction[0] *= 1.25
+                self.direction[1] *= 1.25
+            else:
+                self.direction[0] *= -1.25
+                self.direction[1] *= -1    
+               
+                
+    def render(self, screen):
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius, 0)
+        pygame.draw.circle(screen, (0,0,0), self.rect.center, self.radius, 1)
+        
+class FireBall(object):
+    def __init__(self, screensize):
+
+        self.screensize = screensize
+
+        self.centerx = int(screensize[0]*0.5)
+        self.centery = int(screensize[1]*0.5)
+
+        self.radius = 8
+
+        self.colidiu = False
+
+        self.rect = pygame.Rect(self.centerx-self.radius,
+                                self.centery-self.radius,
+                                self.radius*2, self.radius*2)
+
+        #self.color = (100,100,255)
+        self.color = (255,0,0)
+
+        #Define Randomicamente qual direcao a bola vai sair
+        self.direction = [random.randrange(-1,2,2), random.randrange(-1,2,2)]
+        self.speedx = 2.5 
+        self.speedy = 2.5
+        #CODE TASK: change speed/radius as game progresses to make it harder
+        #CODE BONUS: adjust ratio of x and y speeds to make it harder as game progresses
+
+        self.hit_edge_left = False
+        self.hit_edge_right = False
+        self.hit_edge_top = False
+        self.hit_edge_bot = False
+        
+        
+    def update(self, player_paddle, ai_paddle_0,ai_paddle_1,ai_paddle_2, corner_BL, corner_BR, corner_UL, corner_UR ):
+
+        self.centerx += self.direction[0]*self.speedx
+        self.centery += self.direction[1]*self.speedy
+
+        self.rect.center = (self.centerx, self.centery)
+
+        
+        #Checar se colidiu com a parede
+        if self.rect.right >= self.screensize[0]-1:
+            self.hit_edge_right = True
+        elif self.rect.left <= 0:
+            self.hit_edge_left = True
+        elif self.rect.top <= 0:
+            self.hit_edge_top = True
+        elif self.rect.bottom >= self.screensize[1]-1:
+            self.hit_edge_bot = True
+
+        #Colisao da bola com os paddles
+        if self.rect.colliderect(player_paddle.rect):
+            self.direction[0] = -1            
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            player_paddle.speed += 1
+        if self.rect.colliderect(ai_paddle_0.rect):
+            self.direction[0] = 1
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            ai_paddle_0.speed += 1
+        if self.rect.colliderect(ai_paddle_1.rect):
+            self.direction[1] = 1
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            ai_paddle_1.speed += 1
+        if self.rect.colliderect(ai_paddle_2.rect):
+            self.direction[1] = -1
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            ai_paddle_2.speed += 1
+            
+        #Colisao da bola com os cantos      
+        if pygame.sprite.collide_circle(self, corner_BL):
+            if self.direction[0] > 0:
+                self.direction[0] *= 1.2
+                self.direction[1] *= 1
+            else:
+                self.direction[0] *= -1.25
+                self.direction[1] *= -1               
+        
+        if pygame.sprite.collide_circle(self, corner_BR):
+            if self.direction[0] < 0:
+                self.direction[0] *= 1.25
+                self.direction[1] *= 1.25
+            else:
+                self.direction[0] *= -1.25
+                self.direction[1] *= -1
+    
+        if pygame.sprite.collide_circle(self, corner_UL):
+            if self.direction[0] > 0:
+                self.direction[0] *= 1.25
+                self.direction[1] *= 1
+            else:
+                self.direction[0] *= -1.2
+                self.direction[1] *= -1
+                    
+        if pygame.sprite.collide_circle(self, corner_UR):
+            if self.direction[0] < 0:
+                self.direction[0] *= 1.25
+                self.direction[1] *= 1.25
+            else:
+                self.direction[0] *= -1.25
+                self.direction[1] *= -1    
+               
+                
+    def render(self, screen):
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius, 0)
+        pygame.draw.circle(screen, (0,0,0), self.rect.center, self.radius, 1)
+        
 
 #Funcao pra verificar o sinal de um numero
 def sign(x): return 1 if x >= 0 else -1
@@ -136,7 +356,7 @@ def ColisionBalls(B1, B2):
         B2.speedx = auxSX
         B2.speedy = auxSY
 
-#Detectar Colisao dos Pongs    
+#Detectar Colisao das Bolas    
 def ColisionDetect():
     for B1 in Balls:
         for B2 in Balls:
@@ -166,7 +386,7 @@ class Corner(object):
         
         self.rect = pygame.Rect(posx - self.radius, posy - self.radius, 2*self.radius, 2*self.radius)        
         
-        self.color = (0,255,0)
+        self.color = (255,0,0)
             
     def render(self, screen, posx, posy):
         
@@ -295,7 +515,7 @@ class PlayerPaddle(object):
 
         #CODE TASK: Adjust size of Player paddle as match progresses to make it more difficult
 
-        self.speed = 3
+        self.speed = 4
         self.direction = 0
 
     def update(self, corner_UR, corner_BR):
@@ -324,7 +544,7 @@ class PlayerPaddle(object):
         pygame.draw.rect(screen, (0,0,0), (self.centerx-5, self.centery-int(self.height*0.5), self.width, i), 0)
 
 
-def main():
+def main(mode):
     pygame.init()
 
     screensize = (480,480)
@@ -342,18 +562,19 @@ def main():
     venceu = myfont.render("VENCEU!", 1, (0,0,255))
     perdeu = myfont.render("PERDEU!", 1, (255,0,0))
     
-    #pong = Pong(screensize)
-    Balls.append(Pong(screensize))
+    Balls.append(NormalBall(screensize))
     pygame.mixer.music.load('sons\gaming.mp3')            
     ai_paddle_0 = AIPaddle_vert(screensize)
     ai_paddle_1 = AIPaddle_hor(screensize,1)
     ai_paddle_2 = AIPaddle_hor(screensize,0)
     player_paddle = PlayerPaddle(screensize)
     
-    score_ai_0  =  10
-    score_player = 10
-    score_ai_1  =  10
-    score_ai_2  =  10
+    
+    score_ai_0  =  10 / mode
+    score_player = 10 
+    score_ai_1  =  10 / mode 
+    score_ai_2  =  10 / mode   
+    
     label_0 = myfont.render(str(score_ai_0),1,(255,255,255)) 
     label_1 = myfont.render(str(score_ai_1),1,(255,255,255))
     label_2 = myfont.render(str(score_ai_2),1,(255,255,255))
@@ -364,6 +585,7 @@ def main():
     cornerUL = Corner(screensize, 0, 0)
     cornerUR = Corner(screensize, 480, 0) 
     scored = pygame.mixer.Sound('sons\scored.wav')
+    derrota = pygame.mixer.Sound('sons\derrota.wav')
     pygame.mixer.music.play(-1)
     SP = 0
     SA0 = 0
@@ -380,9 +602,15 @@ def main():
         #Teste         
         currentTime = time.time()
         actualTime = currentTime - startTime
-        #print(actualTime / timer)
+        
         if (actualTime / timer > 1):
-            Balls.append(Pong(screensize))
+            balltype = random.randrange(0,6,1)
+            if balltype == 0:
+                Balls.append(FireBall(screensize))
+            elif balltype == 1:
+                Balls.append(IceBall(screensize))
+            else:
+                Balls.append(NormalBall(screensize))            
             timer += 5
         #---------------    
         
@@ -419,8 +647,6 @@ def main():
         
         
 
-        #CODE TASK: make some text on the screen over everything else saying you lost/won, and then exit on keypress
-        #CODE BONUS: allow restarting of the game (hint: you can recreate the Pong/Paddle objects the same way we made them initially)
         
         #TESTE
         for Ball in Balls:
@@ -432,10 +658,9 @@ def main():
                 else:
                     score_ai_0 -= 1
                     #------------
-                    SA0 += 10
+                    SA0 += 10 * mode
                     #-------------
                     Balls.remove(Ball)
-                    #Balls.append(Pong(screensize))
                     label_0 = myfont.render(str(score_ai_0),1,(255,255,255))
                     scored.play()
             elif Ball.hit_edge_top :
@@ -446,11 +671,10 @@ def main():
                 else:
                     score_ai_1 -= 1
                     #------------
-                    SA1 += 10
+                    SA1 += 10 * mode
                     #ai_paddle_1.lose(screen, SA1)
                     #----------
                     Balls.remove(Ball)
-                    #Balls.append(Pong(screensize))
                     label_1 = myfont.render(str(score_ai_1),1,(255,255,255))
                     scored.play()
             elif  Ball.hit_edge_bot :
@@ -459,13 +683,12 @@ def main():
                     Ball.direction[1] = -1
                     Ball.hit_edge_bot = False
                 else:
-                    score_ai_2 -= 1
+                    score_ai_2 -= 1 
                     #----------
-                    SA2 += 10
+                    SA2 += 10 * mode
                     #ai_paddle_2.lose(screen, SA2)
                     #-----------
                     Balls.remove(Ball)
-                    #Balls.append(Pong(screensize))
                     label_2 = myfont.render(str(score_ai_2),1,(255,255,255))
                     scored.play()
             elif Ball.hit_edge_right:
@@ -480,16 +703,15 @@ def main():
                     player_paddle.lose(screen, SP)
                     #------------------------------------------------------
                     Balls.remove(Ball)
-                    #Balls.append(Pong(screensize))
                     label_player = myfont.render(str(score_player),1,(255,255,255))
                     scored.play()
                         
-        #Colisao entre os pongs
+        #Colisao entre as bolas
         ColisionDetect()
                 
                 
         #rendering phase
-        screen.fill((100,200,100))
+        screen.fill((128,128,128))
              
         for Ball in Balls:
             Ball.render(screen)
@@ -506,7 +728,6 @@ def main():
         if score_player > 0:
             player_paddle.render(screen)
             player_paddle.lose(screen, SP)
-        #pong.render(screen)
         cornerBL.render(screen, 0, 480)
         cornerBR.render(screen, 480, 480)
         cornerUL.render(screen, 0, 0)
@@ -534,10 +755,11 @@ def main():
                             fim = False               
             else:
                 screen.blit(perdeu, (150, 200))
-                   
+                derrota.play()
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE or event.type == QUIT:
+   
                             fim = False
                                  
               
