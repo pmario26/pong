@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 import game
 
+# executar esse script
+
 def run():
 	pygame.init()
 	
