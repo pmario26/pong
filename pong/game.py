@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import random,math
 import time
-#import menu
+
 
 Balls = [] # Lista de Bolas no jogo
 class NormalBall(object):
@@ -21,15 +21,14 @@ class NormalBall(object):
                                 self.centery-self.radius,
                                 self.radius*2, self.radius*2)
 
-        #self.color = (100,100,255)
+        
         self.color = (255,255,255)
 
         #Define Randomicamente qual direcao a bola vai sair
         self.direction = [random.randrange(-1,2,2), random.randrange(-1,2,2)]
         self.speedx = 2 
         self.speedy = 2 
-        #CODE TASK: change speed/radius as game progresses to make it harder
-        #CODE BONUS: adjust ratio of x and y speeds to make it harder as game progresses
+       
 
         self.hit_edge_left = False
         self.hit_edge_right = False
@@ -127,16 +126,13 @@ class IceBall(object):
                                 self.centery-self.radius,
                                 self.radius*2, self.radius*2)
 
-        #self.color = (100,100,255)
         self.color = (100,200,240)
 
         #Define Randomicamente qual direcao a bola vai sair
         self.direction = [random.randrange(-1,2,2), random.randrange(-1,2,2)]
         self.speedx = 1.5 
         self.speedy = 1.5
-        #CODE TASK: change speed/radius as game progresses to make it harder
-        #CODE BONUS: adjust ratio of x and y speeds to make it harder as game progresses
-
+       
         self.hit_edge_left = False
         self.hit_edge_right = False
         self.hit_edge_top = False
@@ -166,22 +162,34 @@ class IceBall(object):
             self.direction[0] = -1            
             self.speedx *= 1.05
             self.speedy *= 1.05
-            player_paddle.speed -= 1
+            if player_paddle.speed > 4:
+                player_paddle.speed = 4
+            else:
+                player_paddle.speed *= 0.75
         if self.rect.colliderect(ai_paddle_0.rect):
             self.direction[0] = 1
             self.speedx *= 1.05
             self.speedy *= 1.05
-            ai_paddle_0.speed -= 1
+            if ai_paddle_0.speed > 4:
+                ai_paddle_0.speed = 4
+            else:
+                ai_paddle_0.speed *= 0.75
         if self.rect.colliderect(ai_paddle_1.rect):
             self.direction[1] = 1
             self.speedx *= 1.05
             self.speedy *= 1.05
-            ai_paddle_1.speed -= 1
+            if ai_paddle_1.speed > 4:
+                ai_paddle_1.speed = 4
+            else:
+                ai_paddle_1.speed *= 0.75
         if self.rect.colliderect(ai_paddle_2.rect):
             self.direction[1] = -1
             self.speedx *= 1.05
             self.speedy *= 1.05
-            ai_paddle_2.speed -= 1
+            if ai_paddle_2.speed > 4:
+                ai_paddle_2.speed = 4
+            else:
+                ai_paddle_2.speed *= 0.75
             
         #Colisao da bola com os cantos      
         if pygame.sprite.collide_circle(self, corner_BL):
@@ -276,6 +284,128 @@ class FireBall(object):
             self.direction[0] = -1            
             self.speedx *= 1.05
             self.speedy *= 1.05
+            if player_paddle.speed >= 4:
+                player_paddle.speed += 1
+            else:
+                player_paddle.speed = 4
+        if self.rect.colliderect(ai_paddle_0.rect):
+            self.direction[0] = 1
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            if ai_paddle_0.speed >= 5:
+                ai_paddle_0.speed += 1
+            else:
+                ai_paddle_0.speed = 5
+        if self.rect.colliderect(ai_paddle_1.rect):
+            self.direction[1] = 1
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            if ai_paddle_1.speed >= 5:
+                ai_paddle_1.speed += 1
+            else:
+                ai_paddle_1.speed = 5
+        if self.rect.colliderect(ai_paddle_2.rect):
+            self.direction[1] = -1
+            self.speedx *= 1.05
+            self.speedy *= 1.05
+            if ai_paddle_2.speed >= 5:
+                ai_paddle_2.speed += 1
+            else:
+                ai_paddle_2.speed = 5
+            
+        #Colisao da bola com os cantos      
+        if pygame.sprite.collide_circle(self, corner_BL):
+            if self.direction[0] > 0:
+                self.direction[0] *= 1.2
+                self.direction[1] *= 1
+            else:
+                self.direction[0] *= -1.25
+                self.direction[1] *= -1               
+        
+        if pygame.sprite.collide_circle(self, corner_BR):
+            if self.direction[0] < 0:
+                self.direction[0] *= 1.25
+                self.direction[1] *= 1.25
+            else:
+                self.direction[0] *= -1.25
+                self.direction[1] *= -1
+    
+        if pygame.sprite.collide_circle(self, corner_UL):
+            if self.direction[0] > 0:
+                self.direction[0] *= 1.25
+                self.direction[1] *= 1
+            else:
+                self.direction[0] *= -1.2
+                self.direction[1] *= -1
+                    
+        if pygame.sprite.collide_circle(self, corner_UR):
+            if self.direction[0] < 0:
+                self.direction[0] *= 1.25
+                self.direction[1] *= 1.25
+            else:
+                self.direction[0] *= -1.25
+                self.direction[1] *= -1    
+               
+                
+    def render(self, screen):
+        pygame.draw.circle(screen, self.color, self.rect.center, self.radius, 0)
+        pygame.draw.circle(screen, (0,0,0), self.rect.center, self.radius, 1)
+        
+
+class DoomBall(object):
+    def __init__(self, screensize):
+
+        self.screensize = screensize
+
+        self.centerx = int(screensize[0]*0.5)
+        self.centery = int(screensize[1]*0.5)
+
+        self.radius = 8
+
+        self.colidiu = False
+
+        self.rect = pygame.Rect(self.centerx-self.radius,
+                                self.centery-self.radius,
+                                self.radius*2, self.radius*2)
+
+        self.color = (200,55,200)
+
+        #Define Randomicamente qual direcao a bola vai sair
+        self.direction = [random.randrange(-1,2,2), random.randrange(-1,2,2)]
+        self.speedx = 1 
+        self.speedy = 1
+        #CODE TASK: change speed/radius as game progresses to make it harder
+        #CODE BONUS: adjust ratio of x and y speeds to make it harder as game progresses
+
+        self.hit_edge_left = False
+        self.hit_edge_right = False
+        self.hit_edge_top = False
+        self.hit_edge_bot = False
+        
+        
+    def update(self, player_paddle, ai_paddle_0,ai_paddle_1,ai_paddle_2, corner_BL, corner_BR, corner_UL, corner_UR ):
+
+        self.centerx += self.direction[0]*self.speedx
+        self.centery += self.direction[1]*self.speedy
+
+        self.rect.center = (self.centerx, self.centery)
+
+        
+        #Checar se colidiu com a parede
+        if self.rect.right >= self.screensize[0]-1:
+            self.hit_edge_right = True
+        elif self.rect.left <= 0:
+            self.hit_edge_left = True
+        elif self.rect.top <= 0:
+            self.hit_edge_top = True
+        elif self.rect.bottom >= self.screensize[1]-1:
+            self.hit_edge_bot = True
+
+        #Colisao da bola com os paddles
+        if self.rect.colliderect(player_paddle.rect):
+            self.direction[0] = -1            
+            self.speedx *= 1.05
+            self.speedy *= 1.05
             player_paddle.speed += 1
         if self.rect.colliderect(ai_paddle_0.rect):
             self.direction[0] = 1
@@ -330,7 +460,8 @@ class FireBall(object):
     def render(self, screen):
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius, 0)
         pygame.draw.circle(screen, (0,0,0), self.rect.center, self.radius, 1)
-        
+
+
 
 #Funcao pra verificar o sinal de um numero
 def sign(x): return 1 if x >= 0 else -1
@@ -423,6 +554,7 @@ class AIPaddle_vert(object):
                     self.centery += self.speed
 
         self.rect.center = (self.centerx, self.centery)
+        
         #Checar colisao com os cantos
         if self.rect.colliderect(corner_UL):
             self.rect.top = corner_UL.radius 
@@ -488,6 +620,7 @@ class AIPaddle_hor(object):
         elif self.rect.colliderect(corner_L):
             self.rect.left = self.screensize[0] - corner_L.radius    
             self.centerx -= self.speed
+            
         
         #ajustar a posicao
         self.rect.center = (self.centerx, self.centery)              
@@ -556,11 +689,13 @@ def main(mode):
     
     fim = False #Termino do jogo
     vitoria = False
-    #Fonte
-    myfont = pygame.font.SysFont("comicsansms",50)
     
+    #Fonte
+    #myfont = pygame.font.SysFont("comicsansms",50)
+    myfont = pygame.font.Font('fontetitulo.ttf',40)
     venceu = myfont.render("VENCEU!", 1, (0,0,255))
-    perdeu = myfont.render("PERDEU!", 1, (255,0,0))
+    perdeu = myfont.render("PERDEU!", 1, (255,0,0))   
+    
     
     Balls.append(NormalBall(screensize))
     pygame.mixer.music.load('sons\gaming.mp3')            
@@ -568,7 +703,8 @@ def main(mode):
     ai_paddle_1 = AIPaddle_hor(screensize,1)
     ai_paddle_2 = AIPaddle_hor(screensize,0)
     player_paddle = PlayerPaddle(screensize)
-    
+    PlayerCollideCornerBot = False
+    PlayerCollideCornerUp = False
     
     score_ai_0  =  10 / mode
     score_player = 10 
@@ -585,7 +721,7 @@ def main(mode):
     cornerUL = Corner(screensize, 0, 0)
     cornerUR = Corner(screensize, 480, 0) 
     scored = pygame.mixer.Sound('sons\scored.wav')
-    derrota = pygame.mixer.Sound('sons\derrota.wav')
+    derrota = pygame.mixer.Sound('sons\derrota.wav')    
     pygame.mixer.music.play(-1)
     SP = 0
     SA0 = 0
@@ -593,6 +729,7 @@ def main(mode):
     SA2 = 0
     #Tempo em Milisegundos para aparecer uma nova bola
     timer = 5 #a cada 5 segundos
+    DoomTimer = 30 #Timer para desaparecer DoomBall
     startTime = time.time()
     
     while running:
@@ -602,18 +739,24 @@ def main(mode):
         #Teste         
         currentTime = time.time()
         actualTime = currentTime - startTime
-        
-        if (actualTime / timer > 1):
-            balltype = random.randrange(0,6,1)
-            if balltype == 0:
-                Balls.append(FireBall(screensize))
-            elif balltype == 1:
+        if (actualTime / timer) > 1:
+            balltype = random.randrange(0,9,1)
+            if balltype == 1 or balltype == 2:
+                Balls.append(FireBall(screensize))                
+            elif balltype == 3 or balltype == 4:
                 Balls.append(IceBall(screensize))
+            elif balltype == 0:
+                Balls.append(DoomBall(screensize))
             else:
                 Balls.append(NormalBall(screensize))            
             timer += 5
-        #---------------    
-        
+        #---------------   
+        #Remover DoomBall
+        for Ball in Balls:
+            if type(Ball) == DoomBall:
+                if (actualTime / DoomTimer > 1):
+                    Balls.remove(Ball)
+                    DoomTimer += 30
         
         #event handling phase
         
@@ -623,10 +766,20 @@ def main(mode):
 
             if event.type == KEYDOWN:
                 if event.key == K_UP:
-                    player_paddle.direction = -1
+                    #Verifica se esta colidido com o corner de cima
+                    if player_paddle.rect.top <= cornerUR.rect.bottom:
+                        player_paddle.direction = 0
+                    else:
+                        player_paddle.direction = -1
                 elif event.key == K_DOWN:
-                    player_paddle.direction = 1
+                    #Verifica se esta colidido com o corner de baixo
+                    if player_paddle.rect.bottom >= cornerBR.rect.top:
+                        player_paddle.direction = 0
+                    else:
+                        player_paddle.direction = 1
+        
             if event.type == KEYUP:
+                #PlayerCollideCorner = False
                 if event.key == K_UP and player_paddle.direction == -1:
                     player_paddle.direction = 0
                 elif event.key == K_DOWN and player_paddle.direction == 1:
@@ -646,12 +799,14 @@ def main(mode):
             Ball.update(player_paddle, ai_paddle_0,ai_paddle_1,ai_paddle_2,cornerBL, cornerBR, cornerUL, cornerUR)
         
         
-
-        
         #TESTE
         for Ball in Balls:
             if Ball.hit_edge_left:
-                #print 'You Won'
+                #Verificar DoomBall
+                if type(Ball) == DoomBall:
+                    SA0 = 100
+                    score_ai_0 = 0
+                    
                 if score_ai_0 <= 0:
                     Ball.direction[0] = 1
                     Ball.hit_edge_left = False
@@ -665,6 +820,11 @@ def main(mode):
                     scored.play()
             elif Ball.hit_edge_top :
                 #print 'You Won'
+                #Verificar DoomBall
+                if type(Ball) == DoomBall:
+                    SA1 = 100
+                    score_ai_1 = 0
+                    
                 if score_ai_1 <= 0:
                     Ball.direction[1] = 1
                     Ball.hit_edge_top = False
@@ -677,8 +837,12 @@ def main(mode):
                     Balls.remove(Ball)
                     label_1 = myfont.render(str(score_ai_1),1,(255,255,255))
                     scored.play()
-            elif  Ball.hit_edge_bot :
-               # print 'You Won'
+            elif  Ball.hit_edge_bot:
+                #Verificar DoomBall
+                if type(Ball) == DoomBall:
+                    SA2 = 100
+                    score_ai_2 = 0                
+
                 if score_ai_2 <= 0:
                     Ball.direction[1] = -1
                     Ball.hit_edge_bot = False
@@ -692,7 +856,11 @@ def main(mode):
                     label_2 = myfont.render(str(score_ai_2),1,(255,255,255))
                     scored.play()
             elif Ball.hit_edge_right:
-                #print 'You Lose'
+                #Verifica se DoomBall
+                if type(Ball) == DoomBall:
+                    SP = 100
+                    score_player = 0
+                
                 if score_player <= 0:
                     Ball.direction[0] *= -1
                     Ball.hit_edge_right = False
@@ -715,7 +883,7 @@ def main(mode):
              
         for Ball in Balls:
             Ball.render(screen)
-            
+        
         if score_ai_0 > 0:
             ai_paddle_0.render(screen)
             ai_paddle_0.lose(screen, SA0)
@@ -732,10 +900,7 @@ def main(mode):
         cornerBR.render(screen, 480, 480)
         cornerUL.render(screen, 0, 0)
         cornerUR.render(screen, 480, 0)        
-        #screen.blit(label_player, (425, 415)) #585
-        #screen.blit(label_2, (0,415))
-        #screen.blit(label_0, (0,-10))
-        #screen.blit(label_1, (425,-10))
+        
         
         #Venceu ou perdeu
         if SP == 100: 
@@ -748,7 +913,7 @@ def main(mode):
             running = False
             pygame.display.update()
             if vitoria == True:
-                screen.blit(venceu, (150, 200))
+                screen.blit(venceu, (150, 200))                
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE or event.type == QUIT:
@@ -759,10 +924,9 @@ def main(mode):
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_RETURN or event.key == pygame.K_ESCAPE or event.type == QUIT:
-   
                             fim = False
                                  
-              
+            
         pygame.display.flip()
         
     pygame.quit()
