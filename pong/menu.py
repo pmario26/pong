@@ -48,7 +48,7 @@ def run():
 				game.main(2)			
 		else:
 			pygame.draw.rect(screen, (0,200, 0), (130, 185, 220, 50), 1)
-		#Apertar o botão monstro
+		#Apertar o botao monstro
 		if 130+220 > mouse[0] > 130 and 245+50 > mouse[1] > 245:
 			pygame.draw.rect(screen, (0,200, 0), (130, 245, 220, 50), 10)
 			if click[0] == 1:
